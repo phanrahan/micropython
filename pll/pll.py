@@ -1,0 +1,7 @@
+REF = 12000000
+
+FBDIV = 125
+DIV1 = 6
+DIV2 = 2
+print(REF * FBDIV / DIV1 / DIV2)
+print(REF * 73 / 7 / 1)
