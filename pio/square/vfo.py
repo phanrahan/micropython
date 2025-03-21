@@ -6,5 +6,6 @@ def vfo():
     set(pins, 1)
     set(pins, 0)
 
+# 2500000 / 2 = 1250000 Hz
 sm = rp2.StateMachine(0, vfo, freq=2500000, set_base=Pin(0))
 sm.active(1)

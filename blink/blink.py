@@ -1,11 +1,16 @@
 from machine import Pin
 import time
 
-# rp2040
-#led_pin = 0  
+# pico and pico2
+led_pin = 25 
+
+# xiao rp2040
+#led_pin = 17 # R  
+#led_pin = 16 # G  
+#led_pin = 25 # B
 
 # esp32c3
-led_pin = 10  
+#led_pin = 10  
 
 led = Pin(led_pin, Pin.OUT)
 while 1:
