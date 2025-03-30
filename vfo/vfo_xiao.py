@@ -1,11 +1,4 @@
-# Si5351 VFO with rotary encoder and OLED display for RP2040 Zero
 # Peter, VK3TPM, https://blog.marxy.org
-#
-# Uses i2c bus 1 which is SCL=3, SDA=2
-# 
-# Encoder Edge pins
-# GND, VCC, Switch, A, B
-# Note that the large font ssd1306 takes a while to load up on start
 
 from machine import Pin
 import time
@@ -15,14 +8,20 @@ import si5351 # https://github.com/hwstar/Si5351_Micropython
 
 # GPIO Pins for Rotary Encoder
 # GND, VCC, Switch, A, B
-CLKPin = Pin(26, Pin.IN, Pin.PULL_UP)  # A channel
-DTPin = Pin(27, Pin.IN, Pin.PULL_UP)   # B channel
-SWPin = Pin(28, Pin.IN, Pin.PULL_UP)   # Button (optional)
+# For RP2040 Zero
+#CLKPin = Pin(26, Pin.IN, Pin.PULL_UP)  # A channel
+#DTPin = Pin(27, Pin.IN, Pin.PULL_UP)   # B channel
+#SWPin = Pin(28, Pin.IN, Pin.PULL_UP)   # Button (optional)
+# For RP2040 Xiao
+CLKPin = Pin(1, Pin.IN, Pin.PULL_UP)  # A channel
+DTPin = Pin(2, Pin.IN, Pin.PULL_UP)   # B channel
+SWPin = Pin(3, Pin.IN, Pin.PULL_UP)   # Button (optional)
 
 from machine import I2C,Pin
 
 # For RP2040 Zero use pins 2 and 3 for I2C bus 1
-i2c = machine.I2C(1, scl=machine.Pin(3), sda=machine.Pin(2), freq=400000) # 400kHz
+# For RP2040 Xiao use pins 7 and 6 for I2C bus 1
+i2c = machine.I2C(1, scl=machine.Pin(7), sda=machine.Pin(7), freq=400000) # 400kHz
 #i2c = machine.I2C(1)
 
 # Instantiate i2c objects
