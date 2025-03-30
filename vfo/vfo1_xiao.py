@@ -1,11 +1,10 @@
 # Peter, VK3TPM, https://blog.marxy.org
 
-from machine import Pin, I2C
+from machine import Pin
 import time
 import math
 import ssd1306 # https://github.com/kwankiu/ssd1306wrap/
 import si5351 # https://github.com/hwstar/Si5351_Micropython
-import encoder
 
 # GPIO Pins for Rotary Encoder
 # GND, VCC, Switch, A, B
@@ -18,12 +17,12 @@ CLKPin = Pin(1, Pin.IN, Pin.PULL_UP)  # A channel
 DTPin = Pin(2, Pin.IN, Pin.PULL_UP)   # B channel
 SWPin = Pin(3, Pin.IN, Pin.PULL_UP)   # Button (optional)
 
-encoder = Encoder(1,CLKPin)
-
+from machine import I2C,Pin
 
 # For RP2040 Zero use pins 2 and 3 for I2C bus 1
 # For RP2040 Xiao use pins 7 and 6 for I2C bus 1
 i2c = machine.I2C(1, scl=machine.Pin(7), sda=machine.Pin(6), freq=400000) # 400kHz
+#i2c = machine.I2C(1)
 
 # Instantiate i2c objects
 oled = ssd1306.SSD1306_I2C(128, 32, i2c)
@@ -31,7 +30,7 @@ clkgen = si5351.SI5351(i2c)
 
 # Variables to track position
 encoder_position = 0
-last_state = encoder.value()
+last_state = CLKPin.value()
 
 start_frequency = 7000000
 min_step_power = 1
@@ -50,8 +49,8 @@ def main():
     oled_display(str(frequency))
     # Main loop
     while True:
-        rotary()
-        time.sleep(0.5)
+        #print("Encoder Position:", encoder_position)
+        time.sleep(0.5)  # Reduce CPU usage
     
 def change_step():
     global step, min_step_power, max_step_power, step_power
@@ -77,19 +76,27 @@ def draw_step(step):
     line_start_x = text_width - (char_width * step_power) - char_width
     oled.hline(line_start_x, underline_y, char_width, 1) # x, y, w, c
                     
-def rotary():
+def rotary_callback(pin):
+    """Interrupt handler for rotary encoder"""
     global encoder_position, last_state, frequency
-    current_state = encoder.value()
-    if current_state != last_state:
-        if current_state > last_state:
+    current_state = CLKPin.value()
+    if current_state != last_state:  # Only process when state changes
+        if DTPin.value() != current_state:
+            encoder_position += 1  # Clockwise
             frequency += int(math.pow(10, step_power))
-        elif current_state < last_state:
+        else:
+            encoder_position -= 1  # Counterclockwise
             frequency -= int(math.pow(10, step_power))
         setFrequency(frequency)
         oled_display(str(frequency))
-
+        
         last_state = current_state
     
+# Attach interrupt to CLK pin (rising/falling edge)
+# https://docs.micropython.org/en/latest/library/machine.Pin.html#machine.Pin.irq
+# options: Pin.IRQ_RISING | Pin.IRQ_FALLING | Pin.IRQ_LOW_LEVEL | Pin.IRQ_HIGH_LEVEL
+CLKPin.irq(trigger=Pin.IRQ_RISING | Pin.IRQ_FALLING, handler=rotary_callback)
+
 # Optional: Detect button press
 def button_callback(pin):
     #print("Button Pressed!")
