@@ -8,14 +8,8 @@
 
 from machine import Pin
 from array import array
+import time
 import rp2
-
-# Test with encoder on pins 2 and 3:
-# e = Encoder(0, Pin(2))
-
-# while True:
-# time.sleep(1)
-# print(e.value())
 
 # Closure enables Viper to retain state. Currently (V1.17) nonlocal doesn't
 # work: https://github.com/micropython/micropython/issues/8086
@@ -75,3 +69,13 @@ class Encoder:
         if value is not None:
             self._pos[0] = value
         return self._pos[0]
+
+# Test with encoder on pins 1 and 2:
+pin1 = Pin(1,Pin.IN, Pin.PULL_UP)
+pin2 = Pin(2,Pin.IN, Pin.PULL_UP)
+
+e = Encoder(1, pin1)
+
+while True:
+  time.sleep(0.1)
+  print(e.value())
