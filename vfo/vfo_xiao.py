@@ -46,7 +46,8 @@ def main():
     clkgen.init(si5351.CRYSTAL_LOAD_0PF, 25000000, -4000)
     setFrequency(frequency)
     clkgen.output_enable(si5351.CLK0, True)
-    clkgen.drive_strength(si5351.CLK0, si5351.DRIVE_2MA) # up to DRIVE_8MA
+    #clkgen.drive_strength(si5351.CLK0, si5351.DRIVE_2MA) # up to DRIVE_2MA
+    clkgen.drive_strength(si5351.CLK0, si5351.DRIVE_8MA) # up to DRIVE_8MA
     oled_display(str(frequency))
     # Main loop
     while True:
