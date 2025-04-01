@@ -7,21 +7,21 @@ import ssd1306 # https://github.com/kwankiu/ssd1306wrap/
 import si5351 # https://github.com/hwstar/Si5351_Micropython
 import encoder
 
-# GPIO Pins for Rotary Encoder
-# GND, VCC, Switch, A, B
-# For RP2040 Zero
-#CLKPin = Pin(26, Pin.IN, Pin.PULL_UP)  # A channel
-#DTPin = Pin(27, Pin.IN, Pin.PULL_UP)   # B channel
-#SWPin = Pin(28, Pin.IN, Pin.PULL_UP)   # Button (optional)
-# For RP2040 Xiao
-CLKPin = Pin(1, Pin.IN, Pin.PULL_UP)  # A channel
-DTPin = Pin(2, Pin.IN, Pin.PULL_UP)   # B channel
-SWPin = Pin(3, Pin.IN, Pin.PULL_UP)   # Button (optional)
+# GPIO Pins for Rotary Encoder: A, B, SW
+# RP2040 Zero
+#A = Pin(26, Pin.IN, Pin.PULL_UP)  # A channel
+#B = Pin(27, Pin.IN, Pin.PULL_UP)   # B channel
+#SW = Pin(28, Pin.IN, Pin.PULL_UP)   # Button (optional)
+# RP2040 Xiao
+A = Pin(1, Pin.IN, Pin.PULL_UP)  # A channel
+B = Pin(2, Pin.IN, Pin.PULL_UP)   # B channel
+SW = Pin(3, Pin.IN, Pin.PULL_UP)   # Button (optional)
 
-encoder = encoder.Encoder(1,CLKPin)
+encoder = encoder.Encoder(1,A)
 
 
 # For RP2040 Zero use pins 2 and 3 for I2C bus 1
+# i2c = machine.I2C(1, scl=machine.Pin(2), sda=machine.Pin(3), freq=400000) # 400kHz
 # For RP2040 Xiao use pins 7 and 6 for I2C bus 1
 i2c = machine.I2C(1, scl=machine.Pin(7), sda=machine.Pin(6), freq=400000) # 400kHz
 
@@ -99,7 +99,7 @@ def button_callback(pin):
     oled_display(str(frequency))
     time.sleep(0.5) # try to avoid bounce
 
-SWPin.irq(trigger=Pin.IRQ_FALLING, handler=button_callback)
+SW.irq(trigger=Pin.IRQ_FALLING, handler=button_callback)
 
 def setFrequency(newFrequency):
     #print(newFrequency)
