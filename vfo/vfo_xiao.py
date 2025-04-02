@@ -65,8 +65,9 @@ def change_step():
     
 def oled_display(message):
     oled.fill(0)#clear
-    oled.wrap(message,0,12,3)  #x, y, size
-    draw_step(step)
+    #oled.wrap(message,0,12,3)  #x, y, size
+    oled.text(message, 0, 12, 1)
+    #draw_step(step)
     oled.show()
     
 def draw_step(step):
