@@ -25,8 +25,8 @@ encoder = encoder.Encoder(1,A)
 # For RP2040 Xiao use pins 7 and 6 for I2C bus 1
 i2c = machine.I2C(1, scl=machine.Pin(7), sda=machine.Pin(6), freq=400000) # 400kHz
 
-# Instantiate i2c objects
-oled = ssd1306.SSD1306_I2C(128, 32, i2c)
+#oled = ssd1306.SSD1306_I2C(128, 32, i2c)
+oled = ssd1306.SSD1306_I2C(128, 64, i2c)
 clkgen = si5351.SI5351(i2c)
 
 # Variables to track position

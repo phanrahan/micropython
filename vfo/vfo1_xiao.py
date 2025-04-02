@@ -21,8 +21,7 @@ from machine import I2C,Pin
 
 # For RP2040 Zero use pins 2 and 3 for I2C bus 1
 # For RP2040 Xiao use pins 7 and 6 for I2C bus 1
-i2c = machine.I2C(1, scl=machine.Pin(7), sda=machine.Pin(6), freq=400000) # 400kHz
-#i2c = machine.I2C(1)
+i2c = machine.I2C(1, scl=machine.Pin(7), sda=machine.Pin(6), addr=0x78, freq=400000) # 400kHz
 
 # Instantiate i2c objects
 oled = ssd1306.SSD1306_I2C(128, 32, i2c)
