@@ -4,8 +4,8 @@ import ssd1306
 # using default address 0x3C
 i2c = I2C(1, sda=Pin(6), scl=Pin(7))
 
-display = ssd1306.SSD1306_I2C(128, 64, i2c)
+display = ssd1306.SSD1306_I2C(128, 32, i2c)
 
-display.fill_rect(0, 0, 128, 64, 0)
-#display.text('Hello, World!', 0, 0, 1)
+display.fill(0)
+display.text('Hello, World!', 0, 0, 1)
 display.show()
