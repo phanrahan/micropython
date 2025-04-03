@@ -3,7 +3,8 @@
 from machine import Pin, I2C
 import time
 import math
-import ssd1306 # https://github.com/kwankiu/ssd1306wrap/
+import sh1106 
+#import ssd1306 # https://github.com/kwankiu/ssd1306wrap/
 import si5351 # https://github.com/hwstar/Si5351_Micropython
 import encoder
 
@@ -23,10 +24,11 @@ encoder = encoder.Encoder(1,A)
 # For RP2040 Zero use pins 2 and 3 for I2C bus 1
 # i2c = machine.I2C(1, scl=machine.Pin(2), sda=machine.Pin(3), freq=400000) # 400kHz
 # For RP2040 Xiao use pins 7 and 6 for I2C bus 1
-i2c = machine.I2C(1, scl=machine.Pin(7), sda=machine.Pin(6), freq=400000) # 400kHz
+i2c = I2C(1, sda=Pin(6), scl=Pin(7))
 
+oled = sh1106.SH1106_I2C(128, 64, i2c)
 #oled = ssd1306.SSD1306_I2C(128, 32, i2c)
-oled = ssd1306.SSD1306_I2C(128, 64, i2c)
+
 clkgen = si5351.SI5351(i2c)
 
 # Variables to track position
@@ -46,13 +48,14 @@ def main():
     clkgen.init(si5351.CRYSTAL_LOAD_0PF, 25000000, -4000)
     setFrequency(frequency)
     clkgen.output_enable(si5351.CLK0, True)
-    #clkgen.drive_strength(si5351.CLK0, si5351.DRIVE_2MA) # up to DRIVE_2MA
+    clkgen.drive_strength(si5351.CLK0, si5351.DRIVE_2MA) # up to DRIVE_2MA
     clkgen.drive_strength(si5351.CLK0, si5351.DRIVE_8MA) # up to DRIVE_8MA
+    oled.flip(True)
     oled_display(str(frequency))
     # Main loop
     while True:
-        rotary()
-        time.sleep(0.5)
+       rotary()
+       time.sleep(0.5)
     
 def change_step():
     global step, min_step_power, max_step_power, step_power
@@ -66,15 +69,15 @@ def change_step():
 def oled_display(message):
     oled.fill(0)#clear
     #oled.wrap(message,0,12,3)  #x, y, size
-    oled.text(message, 0, 12, 1)
-    #draw_step(step)
+    oled.text(message, 0, 0, 1)
+    draw_step(step)
     oled.show()
     
 def draw_step(step):
     """Draw a line under the step digit"""
     # https://docs.micropython.org/en/v1.15/library/framebuf.html
-    char_width = 15
-    underline_y = 31
+    char_width = 8
+    underline_y = 8
     text_width = char_width * (len(str(frequency)))
     line_start_x = text_width - (char_width * step_power) - char_width
     oled.hline(line_start_x, underline_y, char_width, 1) # x, y, w, c
