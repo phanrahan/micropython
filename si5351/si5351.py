@@ -16,7 +16,8 @@ _XTAL_FREQ                      = const(25000000)
 _PLL_FIXED                      = const(80000000000)
 _FREQ_MULT                      = const(100)
 
-_PLL_VCO_MIN                    = const(600000000)
+#_PLL_VCO_MIN                    = const(600000000)
+_PLL_VCO_MIN                    = const(380000000)
 _PLL_VCO_MAX                    = const(900000000)
 _MULTISYNTH_MIN_FREQ            = const(500000)
 _MULTISYNTH_DIVBY4_FREQ         = const(150000000)
@@ -982,6 +983,52 @@ class SI5351():
         self._set_ms(clk, ms_reg, int_mode, r_div, div_by_4)
         return 0
     
+
+    #
+    # Sets the clock frequency of the specified CLK output using the given PLL
+    # frequency. You must ensure that the MS is assigned to the correct PLL and
+    # that the PLL is set to the correct frequency before using this method.
+    #
+    # It is important to note that if you use this method, you will have to
+    # track that all settings are sane yourself.
+    # 
+    # freq - Output frequency in Hz
+    # pll_freq - Frequency of the PLL driving the Multisynth in Hz * 100
+    # clk - Clock output
+    #
+    def set_freq_manual(self, freq : int, pll_freq : int, clk : int):
+
+        # Lower bounds check
+        if freq > 0 and freq < _CLKOUT_MIN_FREQ * _FREQ_MULT:
+            freq = _CLKOUT_MIN_FREQ * _FREQ_MULT
+
+        # Upper bounds check
+        if freq > _CLKOUT_MAX_FREQ * _FREQ_MULT:
+            freq = _CLKOUT_MAX_FREQ * _FREQ_MULT
+
+        self.clk_freq[clk] = freq
+
+        self.set_pll(pll_freq, self.pll_assignment[clk])
+
+        self.output_enable(clk, 1)
+
+        r_div, freq = self.select_r_div(freq)
+
+        # Calculate the synth parameters
+        (res, ms_reg) = self._multisynth_calc(freq, pll_freq)
+
+        # If freq > 150 MHz, we need to use DIVBY4 and integer mode
+        int_mode = 0
+        div_by_4 = 0
+        if freq >= _MULTISYNTH_DIVBY4_FREQ * _FREQ_MULT:
+            div_by_4 = 1
+            int_mode = 1
+
+        # Set multisynth registers (MS must be set before PLL)
+        self.set_ms(clk, ms_reg, int_mode, r_div, div_by_4)
+
+        return 0
+
     # Enable or disable a chosen output
     #  clk - Clock output
     # enable - Set to True to enable, False to disable
@@ -1012,62 +1059,21 @@ class SI5351():
         elif drive == DRIVE_8MA:
             reg_val |= 0x03
         self._write_reg(_CLK0_CTRL + clk, reg_val)
-        
- 
-    
-    
-    
-        
-            
-    
-    
-            
-            
-        
-  
-            
-    
-    
-    
-   
 
-                    
-                            
-                            
-                            
-                        
-                        
-                    
-                
-                
-                    
-                    
-                
-                
-                            
-                            
-                        
-                        
-                
+    #
+    # set_phase(enum si5351_clock clk, uint8_t phase)
+    #
+    # clk - Clock output
+    #   (use the si5351_clock enum)
+    # phase - 7-bit phase word
+    #   (in units of VCO/4 period)
+    #
+    # Write the 7-bit phase register. This must be used
+    # with a user-set PLL frequency so that the user can
+    # calculate the proper tuning word based on the PLL period.
+    #
+    def set_phase(self, clk : int, phase : int)
+        # Mask off the upper bit since it is reserved
+        phase = phase & 0b01111111;
+        self._write_reg(_CLK0_PHASE_OFFSET + clk, phase);
 
-
-            
-                
-                
-                        
-            
-
-            
-            
-            
-            
-            
-
-            
-        
-        
-        
-                              
-      
-        
-    
