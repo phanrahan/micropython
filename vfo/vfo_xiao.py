@@ -1,10 +1,18 @@
 # Peter, VK3TPM, https://blog.marxy.org
 
+from sys import path
 from machine import Pin, I2C
 import time
 import math
 import sh1106 
 #import ssd1306 # https://github.com/kwankiu/ssd1306wrap/
+from ezFBfont import ezFBfont
+
+path.append('fonts')
+import ezFBfont_spleen_16x32_num_26
+
+# For RP2040 Xiao use pins 7 and 6 for I2C bus 1
+i2c = I2C(1, sda=Pin(6), scl=Pin(7))
 import si5351 # https://github.com/hwstar/Si5351_Micropython
 import encoder
 
@@ -28,6 +36,8 @@ i2c = I2C(1, sda=Pin(6), scl=Pin(7))
 
 oled = sh1106.SH1106_I2C(128, 64, i2c)
 #oled = ssd1306.SSD1306_I2C(128, 32, i2c)
+
+font1 = ezFBfont(oled, ezFBfont_spleen_16x32_num_26)
 
 clkgen = si5351.SI5351(i2c)
 
@@ -69,15 +79,18 @@ def change_step():
 def oled_display(message):
     oled.fill(0)#clear
     #oled.wrap(message,0,12,3)  #x, y, size
-    oled.text(message, 0, 0, 1)
+    #oled.text(message, 0, 0, 1)
+    font1.write(message, 0, 0)
     draw_step(step)
     oled.show()
     
 def draw_step(step):
     """Draw a line under the step digit"""
     # https://docs.micropython.org/en/v1.15/library/framebuf.html
-    char_width = 8
-    underline_y = 8
+    #char_width = 8
+    char_width = 16
+    #underline_y = 8
+    underline_y = 26
     text_width = char_width * (len(str(frequency)))
     line_start_x = text_width - (char_width * step_power) - char_width
     oled.hline(line_start_x, underline_y, char_width, 1) # x, y, w, c
