@@ -1,5 +1,9 @@
 # SeeSaw MicroPython Drivers
 
+o seesaw
+- https://learn.adafruit.com/adafruit-seesaw-atsamd09-breakout/overview
+- https://github.com/adafruit/Adafruit_CircuitPython_seesaw/tree/main/adafruit_seesaw
+
 ## Adafruit STEMMA Soil Sensor - I2C Capacitive Moisture Sensor
 https://www.adafruit.com/product/4026
 
