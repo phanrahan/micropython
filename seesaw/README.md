@@ -25,3 +25,6 @@ moisture = seesaw.get_moisture()
 # get temperature
 temperature = seesaw.get_temp()
 ```
+
+Pico I2C slave
+- https://github.com/ifurusato/rp2040-i2c-slave
