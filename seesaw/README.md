@@ -1,5 +1,9 @@
 # SeeSaw MicroPython Drivers
 
+o seesaw
+- https://learn.adafruit.com/adafruit-seesaw-atsamd09-breakout/overview
+- https://github.com/adafruit/Adafruit_CircuitPython_seesaw/tree/main/adafruit_seesaw
+
 ## Adafruit STEMMA Soil Sensor - I2C Capacitive Moisture Sensor
 https://www.adafruit.com/product/4026
 
@@ -21,3 +25,6 @@ moisture = seesaw.get_moisture()
 # get temperature
 temperature = seesaw.get_temp()
 ```
+
+Pico I2C slave
+- https://github.com/ifurusato/rp2040-i2c-slave
