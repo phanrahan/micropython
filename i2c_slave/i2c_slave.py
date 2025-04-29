@@ -1,4 +1,4 @@
-from machine import mem32,Pin
+from machine import mem32, Pin
 
 class i2c_slave:
     I2C0_BASE = 0x40044000
@@ -76,7 +76,8 @@ if __name__ == "__main__":
     from machine import mem32
     from i2cSlave import i2c_slave
     
-    s_i2c = i2c_slave(0,sda=0,scl=1,slaveAddress=0x41)
+    # rp2040 zero
+    s_i2c = i2c_slave(1,sda=Pin(26),scl=Pin(27),slaveAddress=0x41)
     
     try:
         while True:
