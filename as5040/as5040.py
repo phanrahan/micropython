@@ -43,9 +43,11 @@ while True:
         angle, mag, err = read_as5040()
         
         if err:
-            print("Error detected!")
+            pass
+            #print("Error detected!")
         elif not mag:
-            print("Magnet missing/weak")
+            pass
+            #print("Magnet missing/weak")
         else:
             # Convert 0-1023 to 0-359 degrees
             degrees = (angle * 360) / 1024

@@ -16,7 +16,7 @@ MicroPython drivers for AMS magnetic rotary encoder ICs, intended to run directl
 - CLK → GPIO 18
 - DO  → GPIO 16
 
-**AS5048A** (hardware SPI, ESP32 VSPI defaults):
+**AS5048A** (hardware SPI, RP2040 pin defaults):
 - SCK → GPIO 18, MOSI → GPIO 23, MISO → GPIO 19
 - CS  → GPIO 5
 
