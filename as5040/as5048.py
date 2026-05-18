@@ -1,11 +1,10 @@
 from machine import Pin, SPI
 import time
 
-# --- Configuration ---
-# Raspberry Pi Pico SPI1 default pins: sck=10, mosi=11, miso=12
+# Xiao RP2040
 spi = SPI(1, baudrate=1000000, polarity=1, phase=1, bits=16,
-          sck=Pin(10), mosi=Pin(11), miso=Pin(12))
-cs = Pin(13, Pin.OUT, value=1) # Chip Select pin
+          sck=Pin(2), mosi=Pin(3), miso=Pin(4))
+cs = Pin(1, Pin.OUT, value=1) # Chip Select pin
 
 # AS5048A Constants
 AS5048_CMD_READ_ANGLE = 0x3FFF

@@ -1,10 +1,10 @@
 import machine
 import time
 
-# Configure pins
-csn = machine.Pin(17, machine.Pin.OUT)
-clk = machine.Pin(18, machine.Pin.OUT)
-do = machine.Pin(16, machine.Pin.IN)
+# Xiao RP2040
+csn = machine.Pin(1, machine.Pin.OUT)
+clk = machine.Pin(2, machine.Pin.OUT)
+do = machine.Pin(4, machine.Pin.IN)
 
 # Initialize states
 csn.value(1) # CSn High (Inactive)
