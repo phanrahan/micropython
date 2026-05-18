@@ -2,11 +2,11 @@ from machine import Pin
 import time
 
 # pico and pico2
-led_pin = 25 
+#led_pin = 25 
 
 # xiao rp2040
 #led_pin = 17 # R  
-#led_pin = 16 # G  
+led_pin = 16 # G  
 #led_pin = 25 # B
 
 # esp32c3
