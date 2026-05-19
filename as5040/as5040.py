@@ -9,6 +9,10 @@ do = machine.Pin(4, machine.Pin.IN)
 INC = 1
 DEC = 2
 
+# Initialize states
+csn.value(1) # CSn High (Inactive)
+clk.value(1)
+
 # The raw 16-bit packet: [Angle(10bit) | OCF | COF | LIN | DEC | INC | PAR]
 def decode(data, ones):
 
@@ -24,27 +28,21 @@ def decode(data, ones):
     return angle, mag, err
 
 def read_as5040_data():
-    # Initialize states
-    csn.value(1) # CSn High (Inactive)
-    clk.value(1)
-    time.sleep_us(1)
     # CSn low to start transfer
     csn.value(0)
-    time.sleep_us(1)
-    clk.value(0)
-    time.sleep_us(1)
+    time.sleep_us(2)
     
     # Read 16 bits (Data + Status)
     data = 0
     ones = 0
     for i in range(16):
+        clk.value(0)
+        time.sleep_us(1)
         clk.value(1)
         time.sleep_us(1)
         bit = do.value()
         ones = ones + bit
         data = (data << 1) | bit
-        clk.value(0)
-        time.sleep_us(1)
     
     # CSn high to end transfer
     csn.value(1)
@@ -55,7 +53,9 @@ def read_as5040():
     while True:
         data, ones = read_as5040_data()
         angle, mag, err = decode(data, ones)
-        if not err:
+        if err:
+            print('Parity error')
+        else:
             break
     return angle, mag
 
