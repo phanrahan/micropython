@@ -17,10 +17,13 @@ def read_as5040():
     
     # Read 16 bits (Data + Status)
     data = 0
+    ones = 0
     for i in range(16):
         clk.value(0)
         time.sleep_us(1)
-        data = (data << 1) | do.value()
+        bit = do.value()
+        ones = ones + bit
+        data = (data << 1) | bit
         clk.value(1)
         time.sleep_us(1)
     
@@ -32,8 +35,8 @@ def read_as5040():
     angle = (data >> 6) & 0x03FF
     
     # Extract status bits
-    err = data & 0x01
-    mag = (data >> 5) & 0x01
+    err = ones != 0
+    mag = (data >> 4) and (data >> 3)
     
     return angle, mag, err
 
@@ -43,11 +46,9 @@ while True:
         angle, mag, err = read_as5040()
         
         if err:
-            pass
-            #print("Error detected!")
+            print("Parity error detected!")
         elif not mag:
-            pass
-            #print("Magnet missing/weak")
+            print("Magnet missing/weak")
         else:
             # Convert 0-1023 to 0-359 degrees
             degrees = (angle * 360) / 1024
