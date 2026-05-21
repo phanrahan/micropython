@@ -2,8 +2,11 @@ from machine import Pin, SPI
 import time
 
 # Xiao RP2040
-spi = SPI(1, baudrate=1000000, polarity=1, phase=1, bits=16,
+print('spi')
+#spi = SPI(0, baudrate=1000000, polarity=0, phase=1, bits=16,
+spi = SPI(0, baudrate=1000000, polarity=0, phase=1, bits=8,
           sck=Pin(2), mosi=Pin(3), miso=Pin(4))
+print('cs')
 cs = Pin(1, Pin.OUT, value=1) # Chip Select pin
 
 # AS5048A Constants
@@ -22,8 +25,8 @@ def read_angle():
     # Bit 14: R/W (1 for Read)
     # Bit 15: Parity (calculated below)
     command = AS5048_CMD_READ_ANGLE | 0x4000
-    parity = calculate_parity(command)
-    command = command | (parity << 15)
+    #parity = calculate_parity(command)
+    #command = command | (parity << 15)
     
     # SPI Transaction
     cs.value(0)
@@ -33,6 +36,7 @@ def read_angle():
     # (The AS5048 replies with the angle from the *previous* command)
     rx_data = bytearray(2)
     spi.write_readinto(bytearray([(command >> 8) & 0xFF, command & 0xFF]), rx_data)
+    #rx_data = spi.read(2,command)
     
     cs.value(1)
     
@@ -48,6 +52,7 @@ def read_angle():
     return angle
 
 # --- Main Loop ---
+print('start')
 while True:
     raw_val = read_angle()
     # Convert 14-bit raw value (0-16383) to degrees (0-360)
