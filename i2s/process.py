@@ -2,35 +2,10 @@ import uasyncio as asyncio
 from machine import Pin, I2S
 
 # 1. Setup I2S Devices
-# Shared pins (BCLK, WS)
-bck_pin = Pin(26)
-ws_pin = Pin(27)
 
-# Microphone (Input)
-sdin_pin = Pin(28)
-audio_in = I2S(
-    0, 
-    sck=bck_pin, 
-    ws=ws_pin, 
-    sd=sdin_pin, 
-    mode=I2S.RX, 
-    bits=16, 
-    format=I2S.MONO, 
-    rate=16000
-)
+i2s = I2S(0, sck=Pin(16), ws=Pin(17), sd=Pin(18), mode=I2S.TX, bits=16, format=I2S.STEREO, rate=44100, ibuf=40000) 
 
-# Speaker/Amplifier (Output)
-sdout_pin = Pin(29)
-audio_out = I2S(
-    1, 
-    sck=bck_pin, 
-    ws=ws_pin, 
-    sd=sdout_pin, 
-    mode=I2S.TX, 
-    bits=16, 
-    format=I2S.MONO, 
-    rate=16000
-)
+i2s = I2S(1, sck=Pin(0), ws=Pin(1), sd=Pin(2), mode=I2S.RX, bits=16, format=I2S.MONO, rate=22050, ibuf=40000) 
 
 # 2. Async Routines
 async def record_and_play():
