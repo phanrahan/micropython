@@ -25,8 +25,8 @@ def read_angle():
     # Bit 14: R/W (1 for Read)
     # Bit 15: Parity (calculated below)
     command = AS5048_CMD_READ_ANGLE | 0x4000
-    #parity = calculate_parity(command)
-    #command = command | (parity << 15)
+    parity = calculate_parity(command)
+    command = command | (parity << 15)
     
     # SPI Transaction
     cs.value(0)
@@ -36,7 +36,6 @@ def read_angle():
     # (The AS5048 replies with the angle from the *previous* command)
     rx_data = bytearray(2)
     spi.write_readinto(bytearray([(command >> 8) & 0xFF, command & 0xFF]), rx_data)
-    #rx_data = spi.read(2,command)
     
     cs.value(1)
     
@@ -58,6 +57,6 @@ while True:
     # Convert 14-bit raw value (0-16383) to degrees (0-360)
     angle_degrees = (raw_val / 16383.0) * 360.0 
     
-    print(f"Raw: {raw_val} | Angle: {angle_degrees:.2f}°")
+    print(f"Raw: {raw_val:#04x} | Angle: {angle_degrees:.2f}°")
     time.sleep_ms(100)
 
